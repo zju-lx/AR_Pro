@@ -10,7 +10,7 @@ import SceneKit
 import ARKit
 
 // MARK: - game state
-enum GameState : Int {
+enum State : Int {
     case detectSurface = 0
     case onboard
     case playing
@@ -26,11 +26,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var planes = [ARAnchor: SCNNode]()
     var selectedPlane: SCNNode?
     
-    var state: GameState = .detectSurface {
+    var state: State = .detectSurface {
         didSet {
             handleGameStateUpdate()
         }
     }
+    
+    var gameController = GameController()
     
     func handleGameStateUpdate() {
         switch state {
@@ -56,7 +58,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     node.isHidden = true
                 }
             }
-            showMessage("onboarded")
+            showMessage("onboarded. Tap to start game.")
         case .playing:
             showMessage("playing")
         case .gameOver:
@@ -75,9 +77,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 selectedPlane = planes[anchor]
                 state = .onboard
             }
-            
-            
+            break
         case .onboard:
+            gameController.startGame()
             break
         case .playing:
             break
