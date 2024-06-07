@@ -21,8 +21,10 @@ enum GameState : Int {
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    
     @IBOutlet weak var informationLabel: UILabel!
+    
+    var planes = [ARAnchor: SCNNode]()
+    var selectedPlane: SCNNode?
     
     var state: GameState = .detectSurface {
         didSet {
@@ -33,9 +35,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func handleGameStateUpdate() {
         switch state {
         case .detectSurface:
-            showMessage("detecting surface")
+            showMessage("Please tap on a surface to place the game.")
         case .onboard:
-            showMessage("onboarding")
+            if (selectedPlane == nil) {
+                state = .detectSurface
+                return
+            }
+            for (anchor, node) in planes {
+                if node == selectedPlane {
+                    planes.removeValue(forKey: anchor)
+                    // set selected plane to be visible
+                    print("set a new skin for selected plane")
+                    let material = SCNMaterial()
+                    material.diffuse.contents = UIColor(white: 0.0, alpha: 0.8)
+                    node.geometry?.materials = [material]
+                    node.isHidden = false
+                } else {
+                    node.removeFromParentNode()
+                    // set other planes to be invisible
+                    node.isHidden = true
+                }
+            }
+            showMessage("onboarded")
         case .playing:
             showMessage("playing")
         case .gameOver:
@@ -43,11 +64,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @objc func tappedInSceneView(sender: UITapGestureRecognizer) {
+    @objc func tappedInSceneView(sender: UIGestureRecognizer) {
         print("tapped")
         switch state {
         case .detectSurface:
-            state = .onboard
+            let tappedLocation = sender.location(in: sceneView)
+            let hitTestResult = sceneView.hitTest(tappedLocation, types: .existingPlane)
+            
+            if let optimalResult = hitTestResult.first, let anchor = optimalResult.anchor {
+                selectedPlane = planes[anchor]
+                state = .onboard
+            }
+            
+            
         case .onboard:
             break
         case .playing:
@@ -60,23 +89,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private func showMessage(_ message: String, animated: Bool = false, duration: TimeInterval = 1.0) {
         print(message)
         DispatchQueue.main.async {
-//            if animated {
-//                UIView.animate(withDuration: duration, animations: {
-//                    self.informationLabel.alpha = 0.0
-//                    self.informationContainerView.alpha = 0.0
-//                }) { _ in
-//                    self.informationLabel.text = message
-//                    self.informationLabel.alpha = 0.0
-//                    self.informationContainerView.alpha = 0.0
-//                    UIView.animate(withDuration: duration, animations: {
-//                        self.informationLabel.alpha = 1.0
-//                        self.informationContainerView.alpha = 1.0
-//                    })
-//                }
-//            } else {
-//                self.informationLabel.text = message
-//            }
-            print(message)
             self.informationLabel.text = message
         }
     }
@@ -121,39 +133,44 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // MARK: - ARSCNViewDelegate
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        // 1. Check we have detected a plane
-        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-        
-        // 2. Create a plane geometry to visualize the plane anchor
-        let planeGeometry = SCNPlane(width: CGFloat(0.5), height:   CGFloat(1.0))
-        // print("width: \(planeAnchor.extent.x), height: \(planeAnchor.extent.z)")
-        
-        // 3. Create a node with the plane geometry
-        let planeNode = SCNNode(geometry: planeGeometry)
-        let planeMaterial = SCNMaterial()
-        planeMaterial.diffuse.contents = UIColor(white: 1.0, alpha: 0.8)
-        planeGeometry.materials = [planeMaterial]
-        
-        // 4. Position the plane geometry in the correct location
-        planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
-        
-        // 5. SCNPlanes are vertical so we need to rotate 90degrees to match the horizontal orientation
-        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
-        
-        // 6. Add the plane node to our node
-        node.addChildNode(planeNode)
+        if state == .detectSurface {
+            // 1. Check we have detected a plane
+            guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+            
+            // 2. Create a plane geometry to visualize the plane anchor
+            let planeGeometry = SCNPlane(width: CGFloat(1.0), height:   CGFloat(0.5))
+            // print("width: \(planeAnchor.extent.x), height: \(planeAnchor.extent.z)")
+            
+            // 3. Create a node with the plane geometry
+            let planeNode = SCNNode(geometry: planeGeometry)
+            let planeMaterial = SCNMaterial()
+            planeMaterial.diffuse.contents = UIColor(white: 1.0, alpha: 0.8)
+            planeGeometry.materials = [planeMaterial]
+            
+            // 4. Position the plane geometry in the correct location
+            planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+            
+            // 5. SCNPlanes are vertical so we need to rotate 90degrees to match the horizontal orientation
+            planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
+            
+            // 6. Add the plane node to our node
+            node.addChildNode(planeNode)
+            planes[anchor] = planeNode
+        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        // 1. Check we have detected a plane
-        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-        
-        // 2. Get the node that contains the plane geometry
-        let planeNode = node.childNodes.first
-        
-        // 3. Get the plane geometry and update the position
-        let planeGeometry = planeNode?.geometry as! SCNPlane
-        planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+        if state == .detectSurface {
+            // 1. Check we have detected a plane
+            guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+            
+            // 2. Get the node that contains the plane geometry
+            let planeNode = node.childNodes.first
+            
+            // 3. Get the plane geometry and update the position
+            let planeGeometry = planeNode?.geometry as! SCNPlane
+            planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+        }
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
