@@ -26,16 +26,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var planes = [ARAnchor: SCNNode]()
     var worldPlane: SCNNode?
     var worldAnchor: ARPlaneAnchor?
-    
     var playerNode: Player?
+    
+    var gameController: GameController?
     
     var state: State = .detectSurface {
         didSet {
             handleGameStateUpdate()
         }
     }
-    
-    var gameController = GameController()
     
     func handleGameStateUpdate() {
         switch state {
@@ -59,11 +58,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     node.removeFromParentNode()
                 }
             }
+            setup()
             showMessage("onboarded. Tap to start game.")
         case .playing:
+            gameController!.startGame()
             showMessage("playing")
         case .gameOver:
-            showMessage("game over")
+            showMessage("game over. Tap for another round.")
         }
     }
     
@@ -81,40 +82,42 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
             break
         case .onboard:
-            setup()
-            gameController.startGame()
             state = .playing
             break
         case .playing:
             break
         case .gameOver:
+            state = .playing
             break
         }
     }
     
     private func setup() {
+        // 1. config scene
         let config = ARWorldTrackingConfiguration()
         config.worldAlignment = .gravity
         config.providesAudioData = false
         config.isLightEstimationEnabled = true
         sceneView.session.run(config)
         
-//        sceneView.scene.rootNode.childNodes.forEach { $0.removeFromParentNode() }
+        // 2. load world and player
         worldPlane?.geometry = nil
         worldPlane?.childNodes.forEach { $0.removeFromParentNode() }
         
         playerNode = Player();
+        worldPlane?.addChildNode(playerNode!)
+        // !!! 一定要把playerNode添加到worldPlane上，否则playerNode的位置会不对
 //        sceneView.scene.rootNode.addChildNode(playerNode!)
 //        playerNode?.position = SCNVector3(worldAnchor!.center.x, worldAnchor!.center.y + 0.5, worldAnchor!.center.z)
-        // !!! 一定要把playerNode添加到worldPlane上，否则playerNode的位置会不对
-        worldPlane?.addChildNode(playerNode!)
-        // placeModel(track: playerNode!.curTrack, location: 0, node: playerNode!)
-        
+                
         let floorNode = loadModel(name: "floor")
-//        sceneView.scene.rootNode.addChildNode(floorNode)
-//        floorNode.position = SCNVector3(worldAnchor!.center)
         worldPlane?.addChildNode(floorNode)
         floorNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 0, 0, 1)
+//        sceneView.scene.rootNode.addChildNode(floorNode)
+//        floorNode.position = SCNVector3(worldAnchor!.center)
+        
+        // 3. init gameController
+        gameController = GameController(worldPlane: worldPlane!, viewController: self)
 
     }
     

@@ -8,46 +8,32 @@
 import Foundation
 import ARKit
 
-enum GameState : Int {
-    case waiting = 0;
-    case playing;
-    case over;
-}
-
 class GameController {
-    var timer: Timer?
+    
+    var worldPlane: SCNNode?
+    var viewController: ViewController?
+    
     var song: Song?
-    var state: GameState = .waiting {
-        didSet {
-            handleGameStateUpdate()
-        }
-    }
     var nextNoteIndex = 0
-    var beatCount = 0
     
-    init() {
+    let interval = 4        // 规定音符从轨道的一端滑动到另一端消耗 4 个 time beat
+    var beatCount = -4
+    
+    var timer: Timer?
+    
+    init(worldPlane: SCNNode, viewController: ViewController) {
         song = getSong()
-        state = .waiting
+        self.worldPlane = worldPlane
+        self.viewController = viewController
     }
     
-    private func handleGameStateUpdate() {
-        switch state {
-        case .waiting:
-            timer?.invalidate()
-            print("game waiting")
-            break
-        case .playing:
-            timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(run), userInfo: nil, repeats: true)
-            print("game playing")
-            break
-        case .over:
-            timer?.invalidate()
-            print("over")
-            break
-        }
+    func startGame() {
+        beatCount = -4;
+        nextNoteIndex = 0;
+        timer = Timer.scheduledTimer(timeInterval: (60.0 / Double(song!.speed)) / 4.0, target: self, selector: #selector(step), userInfo: nil, repeats: true)
     }
     
-    @objc func run() {
+    @objc private func step() {
         print("bee")
         if nextNoteIndex < (song?.notes.count)! {
             var nextNote = song?.notes[nextNoteIndex]
@@ -62,14 +48,10 @@ class GameController {
         }
         beatCount += 1
         if beatCount == song?.length {
-            state = .over
-            timer?.invalidate()
+            print("over.")
+            timer!.invalidate()
+            viewController!.state = .gameOver
         }
     }
-    
-    func startGame() {
-        beatCount = 0;
-        nextNoteIndex = 0;
-        state = .playing
-    }
+
 }
