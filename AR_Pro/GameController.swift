@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ARKit
 
 enum GameState : Int {
     case waiting = 0;
@@ -67,6 +68,8 @@ class GameController {
     }
     
     func startGame() {
+        beatCount = 0;
+        nextNoteIndex = 0;
         state = .playing
     }
 }
