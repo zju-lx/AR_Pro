@@ -69,7 +69,7 @@ class Player : SCNNode {
     }
     
     func jump() {
-        let jumpAction = SCNAction.move(by: SCNVector3(0, 0, 0.5), duration: 0.1)
+        let jumpAction = SCNAction.move(by: SCNVector3(0, 0, 0.2), duration: 0.1)
         player?.runAction(jumpAction)
     }
 }
