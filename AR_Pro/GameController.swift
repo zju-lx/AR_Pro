@@ -15,6 +15,7 @@ class GameController {
     
     var song: Song?
     var nextNoteIndex = 0
+    var noteNodes: [Int:NoteNode] = [:]
     
     let interval = 4        // 规定音符从轨道的一端滑动到另一端消耗 4 个 time beat
     var beatCount = -4
@@ -39,6 +40,8 @@ class GameController {
             var nextNote = song?.notes[nextNoteIndex]
             while nextNote?.start == beatCount {
                 print("play note " + String(nextNoteIndex))
+                noteNodes[nextNote!.id] = NoteNode(song: song!, note: nextNote!)
+                worldPlane?.addChildNode(noteNodes[nextNote!.id]!)
                 nextNoteIndex += 1
                 if nextNoteIndex == song?.notes.count {
                     break
@@ -46,11 +49,31 @@ class GameController {
                 nextNote = song?.notes[nextNoteIndex]
             }
         }
+        updateNodes()
         beatCount += 1
-        if beatCount == song?.length {
+        if beatCount >= song!.length && noteNodes.isEmpty {
             print("over.")
             timer!.invalidate()
             viewController!.state = .gameOver
+        }
+    }
+    
+    private func updateNodes() {
+        for (id, noteNode) in noteNodes {
+            switch noteNode.state {
+            case .waiting:
+                print("note " + String(id) + ": waiting")
+                noteNode.activate()
+                break;
+            case .moving:
+                print("note " + String(id) + ": moving")
+                break;
+            case .reached:
+                print("note " + String(id) + ": reached")
+                noteNode.removeFromParentNode()
+                noteNodes.removeValue(forKey: id)
+                break;
+            }
         }
     }
 

@@ -15,6 +15,7 @@ struct Song: Codable {
 
 extension Song {
     struct Note: Codable {
+        var id: Int         // 音符的 id
         var track: Int      // 音符出现在第几轨道
         var start: Int      // 音符出现的时间
         var duration: Int   // 音符持续的时间
@@ -28,27 +29,31 @@ func getSong() -> Song {
     "speed": 80,
     "notes": [
         {
+            "id": 0,
             "track": 0,
             "start": 0,
             "duration": 4
         },
         {
+            "id": 1,
             "track": 1,
             "start": 4,
             "duration": 4
         },
         {
+            "id": 2,
             "track": 2,
             "start": 8,
             "duration": 4
         },
         {
+            "id": 3,
             "track": 3,
             "start": 12,
             "duration": 4
         }
     ],
-    "length": 16
+    "length": 20
 }
 """
     let jsonData = json.data(using: .utf8)!

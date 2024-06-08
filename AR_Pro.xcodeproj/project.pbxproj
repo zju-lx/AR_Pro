@@ -16,6 +16,7 @@
 		D36062672C11E2FD00B625DC /* AR_ProTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36062662C11E2FD00B625DC /* AR_ProTests.swift */; };
 		D36062712C11E2FD00B625DC /* AR_ProUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36062702C11E2FD00B625DC /* AR_ProUITests.swift */; };
 		D36062732C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36062722C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift */; };
+		D399C7A62C149A5D00D71980 /* NoteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D399C7A52C149A5D00D71980 /* NoteNode.swift */; };
 		D3CD5B7E2C130B320086FCEC /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CD5B7D2C130B320086FCEC /* Song.swift */; };
 		D3CD5B802C130EB00086FCEC /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CD5B7F2C130EB00086FCEC /* GameController.swift */; };
 /* End PBXBuildFile section */
@@ -50,6 +51,7 @@
 		D360626C2C11E2FD00B625DC /* AR_ProUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AR_ProUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36062702C11E2FD00B625DC /* AR_ProUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ProUITests.swift; sourceTree = "<group>"; };
 		D36062722C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ProUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D399C7A52C149A5D00D71980 /* NoteNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNode.swift; sourceTree = "<group>"; };
 		D3CD5B7D2C130B320086FCEC /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		D3CD5B7F2C130EB00086FCEC /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,6 +112,7 @@
 				D3CD5B7D2C130B320086FCEC /* Song.swift */,
 				D3CD5B7F2C130EB00086FCEC /* GameController.swift */,
 				D34B5C792C1340F300A65FB4 /* Player.swift */,
+				D399C7A52C149A5D00D71980 /* NoteNode.swift */,
 			);
 			path = AR_Pro;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D36062582C11E2FB00B625DC /* ViewController.swift in Sources */,
+				D399C7A62C149A5D00D71980 /* NoteNode.swift in Sources */,
 				D3CD5B802C130EB00086FCEC /* GameController.swift in Sources */,
 				D36062542C11E2FB00B625DC /* AppDelegate.swift in Sources */,
 				D34B5C7A2C1340F300A65FB4 /* Player.swift in Sources */,
