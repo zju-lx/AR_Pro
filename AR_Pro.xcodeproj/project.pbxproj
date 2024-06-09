@@ -18,6 +18,9 @@
 		D36062712C11E2FD00B625DC /* AR_ProUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36062702C11E2FD00B625DC /* AR_ProUITests.swift */; };
 		D36062732C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36062722C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift */; };
 		D399C7A62C149A5D00D71980 /* NoteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D399C7A52C149A5D00D71980 /* NoteNode.swift */; };
+		D3CAC6C92C15CA8800BC674D /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CAC6C82C15CA8800BC674D /* AudioPlayer.swift */; };
+		D3CAC6CD2C15D06F00BC674D /* LittleStar.json in Resources */ = {isa = PBXBuildFile; fileRef = D3CAC6CC2C15D06F00BC674D /* LittleStar.json */; };
+		D3CAC6CF2C15D0E600BC674D /* LittleStar.m4a in Resources */ = {isa = PBXBuildFile; fileRef = D3CAC6CE2C15D0E600BC674D /* LittleStar.m4a */; };
 		D3CD5B7E2C130B320086FCEC /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CD5B7D2C130B320086FCEC /* Song.swift */; };
 		D3CD5B802C130EB00086FCEC /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CD5B7F2C130EB00086FCEC /* GameController.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +57,9 @@
 		D36062702C11E2FD00B625DC /* AR_ProUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ProUITests.swift; sourceTree = "<group>"; };
 		D36062722C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ProUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D399C7A52C149A5D00D71980 /* NoteNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNode.swift; sourceTree = "<group>"; };
+		D3CAC6C82C15CA8800BC674D /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		D3CAC6CC2C15D06F00BC674D /* LittleStar.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LittleStar.json; sourceTree = "<group>"; };
+		D3CAC6CE2C15D0E600BC674D /* LittleStar.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LittleStar.m4a; sourceTree = "<group>"; };
 		D3CD5B7D2C130B320086FCEC /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		D3CD5B7F2C130EB00086FCEC /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,9 +119,11 @@
 				D360625C2C11E2FD00B625DC /* Assets.xcassets */,
 				D3CD5B7D2C130B320086FCEC /* Song.swift */,
 				D3CD5B7F2C130EB00086FCEC /* GameController.swift */,
+				D3CAC6CA2C15CFFA00BC674D /* Music */,
 				D34B5C792C1340F300A65FB4 /* Player.swift */,
 				D399C7A52C149A5D00D71980 /* NoteNode.swift */,
 				D321AD8E2C1578EC00626882 /* ButtonNode.swift */,
+				D3CAC6C82C15CA8800BC674D /* AudioPlayer.swift */,
 			);
 			path = AR_Pro;
 			sourceTree = "<group>";
@@ -135,6 +143,23 @@
 				D36062722C11E2FD00B625DC /* AR_ProUITestsLaunchTests.swift */,
 			);
 			path = AR_ProUITests;
+			sourceTree = "<group>";
+		};
+		D3CAC6CA2C15CFFA00BC674D /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				D3CAC6CB2C15D00F00BC674D /* LittleStar */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		D3CAC6CB2C15D00F00BC674D /* LittleStar */ = {
+			isa = PBXGroup;
+			children = (
+				D3CAC6CC2C15D06F00BC674D /* LittleStar.json */,
+				D3CAC6CE2C15D0E600BC674D /* LittleStar.m4a */,
+			);
+			path = LittleStar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -241,9 +266,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3CAC6CF2C15D0E600BC674D /* LittleStar.m4a in Resources */,
 				D36062562C11E2FB00B625DC /* art.scnassets in Resources */,
 				D360625D2C11E2FD00B625DC /* Assets.xcassets in Resources */,
 				D360625B2C11E2FB00B625DC /* Main.storyboard in Resources */,
+				D3CAC6CD2C15D06F00BC674D /* LittleStar.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +298,7 @@
 				D36062582C11E2FB00B625DC /* ViewController.swift in Sources */,
 				D399C7A62C149A5D00D71980 /* NoteNode.swift in Sources */,
 				D3CD5B802C130EB00086FCEC /* GameController.swift in Sources */,
+				D3CAC6C92C15CA8800BC674D /* AudioPlayer.swift in Sources */,
 				D36062542C11E2FB00B625DC /* AppDelegate.swift in Sources */,
 				D34B5C7A2C1340F300A65FB4 /* Player.swift in Sources */,
 				D3CD5B7E2C130B320086FCEC /* Song.swift in Sources */,

@@ -18,7 +18,7 @@ class GameController {
     var noteNodes: [Int:NoteNode] = [:]
     
     let interval = 4        // 规定音符从轨道的一端滑动到另一端消耗 4 个 time beat
-    var beatCount = -4
+    var beatCount = 0
     
     var score = 0;
     
@@ -31,9 +31,13 @@ class GameController {
     }
     
     func startGame() {
-        beatCount = -4;
+        beatCount = 0;
         nextNoteIndex = 0;
         score = 0;
+        
+        song = getSong(songName: "LittleStar")
+        let AudioSource = AudioPlayer.load(name: "LittleStar");
+        AudioPlayer.play(source: AudioSource, on: worldPlane!)
         
         timer = Timer.scheduledTimer(timeInterval: (60.0 / Double(song!.speed)) / 4.0, target: self, selector: #selector(step), userInfo: nil, repeats: true)
     }

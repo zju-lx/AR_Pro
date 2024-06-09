@@ -10,6 +10,7 @@ import Foundation
 struct Song: Codable {
     var speed: Int           // 歌曲的速度
     var notes: [Note]        // 歌曲的音符
+    var pre: Int             // 前奏长度（第一个音符的出现时间等于 0）
     var length: Int          // 歌曲的长度
 }
 
@@ -27,6 +28,7 @@ func getSong() -> Song {
     let json = """
 {
     "speed": 80,
+    "pre": 0,
     "notes": [
         {
             "id": 0,
@@ -62,11 +64,17 @@ func getSong() -> Song {
     return song
 }
 
-func getSong(fileName: String) -> Song {
-    let path = Bundle.main.path(forResource: fileName, ofType: "json")
-    let url = URL(fileURLWithPath: path!)
-    let jsonData = try! Data(contentsOf: url)
+func getSong(songName: String) -> Song {
+    guard let url = Bundle.main.url(forResource: songName, withExtension: "json") else {
+        fatalError("Can't find song file")
+    }
+    print(url)
+    
+    let jsonData = try? Data(contentsOf: url)
     let decoder = JSONDecoder()
-    let song = try! decoder.decode(Song.self, from: jsonData)
-    return song
+    var song = try? decoder.decode(Song.self, from: jsonData!)
+    for i in 0..<song!.notes.count {
+        song!.notes[i].start += song!.pre
+    }
+    return song!
 }

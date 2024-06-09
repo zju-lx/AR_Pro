@@ -11,7 +11,8 @@ import ARKit
 
 // MARK: - game state
 enum State : Int {
-    case detectSurface = 0
+    case home = 0
+    case detectSurface
     case onboard
     case playing
     case gameOver
@@ -21,7 +22,9 @@ enum State : Int {
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet weak var logo: UIImageView!
     @IBOutlet weak var informationLabel: UILabel!
+    
     
     var planes = [ARAnchor: SCNNode]()
     var worldPlane: SCNNode?
@@ -31,7 +34,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     var gameController: GameController?
     
-    var state: State = .detectSurface {
+    var state: State = .home {
         didSet {
             handleGameStateUpdate()
         }
@@ -39,8 +42,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func handleGameStateUpdate() {
         switch state {
+        case .home:
+            showMessage("Welcome to AR Music Game. Tap to start.")
+            break
         case .detectSurface:
             showMessage("Please tap on a surface to place the game.")
+            detectSurface()
         case .onboard:
             if (worldPlane == nil) {
                 state = .detectSurface
@@ -67,6 +74,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         case .gameOver:
             showMessage("Total Score: \(gameController!.score)\n Tap for another round.")
         }
+    }
+    
+    private func detectSurface() {
+        // Create a session configuration
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
+        
+        // Run the view's session
+        sceneView.session.run(configuration)
     }
     
     private func setup() {
@@ -170,7 +186,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
-        if state == .detectSurface {
+        print("tapped")
+        if state == .home {
+            state = .detectSurface
+            logo.isHidden = true
+        } else if state == .detectSurface {
             let tappedLocation = gestureRecognizer.location(in: sceneView)
             let hitTestResult = sceneView.hitTest(tappedLocation, types: .existingPlane)
             
@@ -226,6 +246,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        logo.image = UIImage(named: "logo")
+        
         // Set the view's delegate
         sceneView.delegate = self
         
@@ -249,11 +271,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Create a session configuration
+        // 要先 run 一个空的 configuration，否则 sceneView 不会显示
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .horizontal
-        
-        // Run the view's session
         sceneView.session.run(configuration)
     }
     
