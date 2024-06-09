@@ -34,23 +34,42 @@ class NoteNode: SCNNode {
         self.song = song
         length = (Float(note.duration) / 4.0) * 1.0
         // 1 个单位长度对应 4 个节拍 根据长度和节拍数成正比的关系可以求出音符的长度
-    }
-    
-    func activate() {
+        
+        // 音游版本
         let geometry = SCNBox(width: CGFloat(self.width), height: CGFloat(self.length), length: CGFloat(self.height), chamferRadius: 0.01)
+        let physicsBody = SCNPhysicsBody(
+            type: .static,
+            shape: SCNPhysicsShape(geometry: geometry, options: nil))
+        physicsBody.restitution = 0
+        physicsBody.friction = 0
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.red.withAlphaComponent(0.9)
         geometry.materials = [material]
         node = SCNNode(geometry: geometry)
+        node!.physicsBody = physicsBody
         addChildNode(node!)
         
+        // 跑酷版本
+//        let scene = SCNScene(named: "art.scnassets/block.scn")!
+//        node = scene.rootNode.childNode(withName: "block", recursively: true)!
+//        node!.removeFromParentNode()
+//        addChildNode(node!)
+//        let scale = SCNMatrix4MakeScale(width, length, height)
+//        node!.transform = scale
+    }
+    
+    func activate() {
+        state = .moving
         localize()
         go()
     }
     
     private func go() {
-        state = .moving
+        // 音游版本
         let moveAction = SCNAction.move(by: SCNVector3(0, -(1.0 + self.length), 0), duration: getTime(length: 4 + self.note!.duration))
+        // 跑酷版本
+        // let moveAction = SCNAction.move(by: SCNVector3(0, -1.0 - self.length, 0), duration: getTime(length: 4 + self.note!.duration))
+        
         // 移动距离：1.0（轨道长度）+ length（音符长度）
         // 移动时间：4（音符从一端滑动到另一端的时间）+ duration（音符持续的时间）
         node!.runAction(moveAction) {
@@ -83,8 +102,12 @@ class NoteNode: SCNNode {
         
         z_offset = self.height / 2
         
+        // 音游版本
         let translation = SCNMatrix4MakeTranslation(x_offset, y_offset, z_offset)
-        node!.transform = translation
+        
+        // 跑酷版本
+        // let translation = SCNMatrix4MakeTranslation(y_offset,x_offset, z_offset)
+        node!.transform = SCNMatrix4Mult(translation, node!.transform)
     }
     
     required init?(coder: NSCoder) {

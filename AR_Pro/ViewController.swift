@@ -104,17 +104,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         worldPlane?.geometry = nil
         worldPlane?.childNodes.forEach { $0.removeFromParentNode() }
         
-        playerNode = Player();
-        worldPlane?.addChildNode(playerNode!)
-        // !!! 一定要把playerNode添加到worldPlane上，否则playerNode的位置会不对
+//        playerNode = Player();
+//        worldPlane?.addChildNode(playerNode!)
+//        // !!! 一定要把playerNode添加到worldPlane上，否则playerNode的位置会不对
 //        sceneView.scene.rootNode.addChildNode(playerNode!)
 //        playerNode?.position = SCNVector3(worldAnchor!.center.x, worldAnchor!.center.y + 0.5, worldAnchor!.center.z)
+        
+        for i in 0..<4 {
+            let buttonNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01))
+            worldPlane?.addChildNode(buttonNode)
+            buttonNode.geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(0.8)
+            placeModel(track: i, location: 0, node: buttonNode)
+        }
                 
         let floorNode = loadModel(name: "floor")
         worldPlane?.addChildNode(floorNode)
         floorNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 0, 0, 1)
 //        sceneView.scene.rootNode.addChildNode(floorNode)
 //        floorNode.position = SCNVector3(worldAnchor!.center)
+        
+        let groundNode = loadModel(name: "ground")
+        worldPlane?.addChildNode(groundNode)
+        groundNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 0, 0, 1)
         
         // 3. init gameController
         gameController = GameController(worldPlane: worldPlane!, viewController: self)
@@ -129,7 +140,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     // place the model (loaded at the origin of the coordinate) at the specified place
-    private func placeModel(track: Int, location: Float, node: SCNNode) {
+    private func placeModel(track: Int, location: Float, node: SCNNode, width: Float = 0.1, height: Float = 0.1, length: Float = 0.1) {
         var x_offset: Float = 0
         var y_offset: Float = 0
         var z_offset: Float = 0
@@ -144,10 +155,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             x_offset = 0.15
         }
         
-        let scaleFactor: Float = 0.8
+        let scaleFactor: Float = 1.0 - length
         y_offset = (location - 0.5) * scaleFactor
         
-        z_offset = 1.0
+        z_offset = height / 2
         
         let translation = SCNMatrix4MakeTranslation(x_offset, y_offset, z_offset)
         node.transform = translation
