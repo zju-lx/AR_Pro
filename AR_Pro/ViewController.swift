@@ -27,6 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var worldPlane: SCNNode?
     var worldAnchor: ARPlaneAnchor?
     var playerNode: Player?
+    var buttonNodes: [Int:ButtonNode] = [:]
     
     var gameController: GameController?
     
@@ -68,30 +69,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @objc func tappedInSceneView(sender: UIGestureRecognizer) {
-        print("tapped")
-        switch state {
-        case .detectSurface:
-            let tappedLocation = sender.location(in: sceneView)
-            let hitTestResult = sceneView.hitTest(tappedLocation, types: .existingPlane)
-            
-            if let optimalResult = hitTestResult.first, let anchor = optimalResult.anchor {
-                worldPlane = planes[anchor]
-                worldAnchor = anchor as? ARPlaneAnchor
-                state = .onboard
-            }
-            break
-        case .onboard:
-            state = .playing
-            break
-        case .playing:
-            break
-        case .gameOver:
-            state = .playing
-            break
-        }
-    }
-    
     private func setup() {
         // 1. config scene
         let config = ARWorldTrackingConfiguration()
@@ -111,9 +88,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        playerNode?.position = SCNVector3(worldAnchor!.center.x, worldAnchor!.center.y + 0.5, worldAnchor!.center.z)
         
         for i in 0..<4 {
-            let buttonNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01))
+            let buttonNode = ButtonNode(track: i)
+            buttonNodes[i] = buttonNode
             worldPlane?.addChildNode(buttonNode)
-            buttonNode.geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(0.8)
             placeModel(track: i, location: 0, node: buttonNode)
         }
                 
@@ -192,8 +169,42 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+        if state == .detectSurface {
+            let tappedLocation = gestureRecognizer.location(in: sceneView)
+            let hitTestResult = sceneView.hitTest(tappedLocation, types: .existingPlane)
+            
+            if let optimalResult = hitTestResult.first, let anchor = optimalResult.anchor {
+                worldPlane = planes[anchor]
+                worldAnchor = anchor as? ARPlaneAnchor
+                state = .onboard
+            }
+        } else if state == .onboard {
+            state = .playing
+        } else if state == .playing{
+            let location = gestureRecognizer.location(in: sceneView)
+            let hitTestResults = sceneView.hitTest(location, options: nil)
+            for buttonNode in buttonNodes.values {
+                if hitTestResults.contains(where: { $0.node == buttonNode }) {
+                    buttonNode.setHit()
+                } else {
+                    buttonNode.resetHit()
+                }
+            }
+            if gestureRecognizer.state == .ended
+                        || gestureRecognizer.state == .cancelled
+                        || gestureRecognizer.state == .failed {
+                for buttonNode in buttonNodes.values {
+                    buttonNode.resetHit()
+                }
+            }
+        } else if state == .gameOver {
+            state = .playing
+        }
+    }
+    
     private func addGestureRecognizer() {
-        sceneView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedInSceneView)))
+        //sceneView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedInSceneView)))
         
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeft(_:)))
         swipeLeft.direction = .left
@@ -206,6 +217,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(swipeUp(_:)))
         swipeUp.direction = .up
         sceneView.addGestureRecognizer(swipeUp)
+        
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPressRecognizer.minimumPressDuration = 0.01
+        sceneView.addGestureRecognizer(longPressRecognizer)
     }
     
     override func viewDidLoad() {

@@ -47,6 +47,7 @@ class NoteNode: SCNNode {
         geometry.materials = [material]
         node = SCNNode(geometry: geometry)
         node!.physicsBody = physicsBody
+        node!.name = "note"
         addChildNode(node!)
         
         // 跑酷版本
