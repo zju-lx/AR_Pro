@@ -21,7 +21,6 @@ class GameController {
     var beatCount = -4
     
     var score = 0;
-    var hit = false;
     
     var timer: Timer?
     
@@ -34,7 +33,6 @@ class GameController {
     func startGame() {
         beatCount = -4;
         nextNoteIndex = 0;
-        hit = false;
         score = 0;
         
         timer = Timer.scheduledTimer(timeInterval: (60.0 / Double(song!.speed)) / 4.0, target: self, selector: #selector(step), userInfo: nil, repeats: true)
@@ -44,7 +42,7 @@ class GameController {
 //        print("bee")
         if nextNoteIndex < (song?.notes.count)! {
             var nextNote = song?.notes[nextNoteIndex]
-            while nextNote?.start == beatCount {
+            while nextNote!.start - 4 == beatCount {
 //                print("play note " + String(nextNoteIndex))
                 noteNodes[nextNote!.id] = NoteNode(song: song!, note: nextNote!)
                 worldPlane?.addChildNode(noteNodes[nextNote!.id]!)
@@ -66,8 +64,15 @@ class GameController {
     }
     
     private func judge() {
-        if hit {
-            score += 1;
+        let buttonNodes = viewController!.buttonNodes
+        for (id, noteNode) in noteNodes {
+            if noteNode.hitCheck(timeBeat: beatCount) {
+                print("note " + String(id) + " hit")
+                if buttonNodes[noteNode.note!.track]!.isHit() {
+                    score += 1
+                    viewController!.showMessage("Score: \(score)")
+                }
+            }
         }
     }
     
@@ -89,13 +94,4 @@ class GameController {
             }
         }
     }
-    
-    func setHit() {
-        hit = true
-    }
-    
-    func unsetHit() {
-        hit = false
-    }
-
 }

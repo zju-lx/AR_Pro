@@ -46,4 +46,8 @@ class ButtonNode: SCNNode {
         geometry?.materials = [normalMaterial]
     }
     
+    func isHit() -> Bool {
+        return hit
+    }
+    
 }

@@ -63,9 +63,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             showMessage("onboarded. Tap to start game.")
         case .playing:
             gameController!.startGame()
-            showMessage("playing")
+            showMessage("Score: \(gameController!.score)")
         case .gameOver:
-            showMessage("game over. Tap for another round.")
+            showMessage("Total Score: \(gameController!.score)\n Tap for another round.")
         }
     }
     
@@ -141,7 +141,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         node.transform = translation
     }
     
-    private func showMessage(_ message: String, animated: Bool = false, duration: TimeInterval = 1.0) {
+    func showMessage(_ message: String, animated: Bool = false, duration: TimeInterval = 1.0) {
         print(message)
         DispatchQueue.main.async {
             self.informationLabel.text = message

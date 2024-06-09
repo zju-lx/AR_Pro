@@ -59,6 +59,15 @@ class NoteNode: SCNNode {
 //        node!.transform = scale
     }
     
+    func hitCheck(timeBeat: Int) -> Bool {
+        let start = note!.start
+        let end = note!.start + note!.duration
+        if timeBeat >= start && timeBeat < end {
+            return true
+        }
+        return false
+    }
+    
     func activate() {
         state = .moving
         localize()
@@ -80,7 +89,7 @@ class NoteNode: SCNNode {
     }
     
     private func getTime(length: Int) -> Double {
-        let one = 60.0 / Double(self.song!.speed)
+        let one = (60.0 / Double(self.song!.speed)) / 4.0
         return one * Double(length)
     }
     
