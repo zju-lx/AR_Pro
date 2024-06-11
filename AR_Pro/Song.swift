@@ -23,6 +23,21 @@ extension Song {
     }
 }
 
+func getSong(songName: String) -> Song {
+    guard let url = Bundle.main.url(forResource: songName, withExtension: "json") else {
+        fatalError("Can't find song file")
+    }
+    print(url)
+    
+    let jsonData = try? Data(contentsOf: url)
+    let decoder = JSONDecoder()
+    var song = try? decoder.decode(Song.self, from: jsonData!)
+    for i in 0..<song!.notes.count {
+        song!.notes[i].start += song!.pre
+    }
+    return song!
+}
+
 // parse a json to get a song
 func getSong() -> Song {
     let json = """
@@ -62,19 +77,4 @@ func getSong() -> Song {
     let decoder = JSONDecoder()
     let song = try! decoder.decode(Song.self, from: jsonData)
     return song
-}
-
-func getSong(songName: String) -> Song {
-    guard let url = Bundle.main.url(forResource: songName, withExtension: "json") else {
-        fatalError("Can't find song file")
-    }
-    print(url)
-    
-    let jsonData = try? Data(contentsOf: url)
-    let decoder = JSONDecoder()
-    var song = try? decoder.decode(Song.self, from: jsonData!)
-    for i in 0..<song!.notes.count {
-        song!.notes[i].start += song!.pre
-    }
-    return song!
 }
