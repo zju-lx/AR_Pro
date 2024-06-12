@@ -11,7 +11,7 @@ import ARKit
 class GameController {
     
     var worldPlane: SCNNode?
-    var viewController: ViewController?
+    var viewController: GameViewController?
     
     var song: Song?
     var nextNoteIndex = 0
@@ -24,7 +24,7 @@ class GameController {
     
     var timer: Timer?
     
-    init(worldPlane: SCNNode, viewController: ViewController) {
+    init(worldPlane: SCNNode, viewController: GameViewController) {
         song = getSong()
         self.worldPlane = worldPlane
         self.viewController = viewController

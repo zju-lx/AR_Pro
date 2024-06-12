@@ -19,10 +19,9 @@ enum State : Int {
 }
 
 // MARK: - game view controller
-class ViewController: UIViewController, ARSCNViewDelegate {
+class GameViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    @IBOutlet weak var logo: UIImageView!
     @IBOutlet weak var informationLabel: UILabel!
     
     
@@ -34,7 +33,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     var gameController: GameController?
     
-    var state: State = .home {
+    var state: State = .detectSurface {
         didSet {
             handleGameStateUpdate()
         }
@@ -187,9 +186,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
         print("tapped")
+        print("state: \(state)")
         if state == .home {
-            state = .detectSurface
-            logo.isHidden = true
+            
         } else if state == .detectSurface {
             let tappedLocation = gestureRecognizer.location(in: sceneView)
             let hitTestResult = sceneView.hitTest(tappedLocation, types: .existingPlane)
@@ -246,8 +245,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        logo.image = UIImage(named: "logo")
-        
         // Set the view's delegate
         sceneView.delegate = self
         
@@ -274,6 +271,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // 要先 run 一个空的 configuration，否则 sceneView 不会显示
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
+        
+        state = .detectSurface
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -295,6 +294,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         if state == .detectSurface {
+            print("detect surface")
             // 1. Check we have detected a plane
             guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
             
