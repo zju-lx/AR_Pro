@@ -19,7 +19,7 @@ enum State : Int {
 }
 
 // MARK: - game view controller
-class GameViewController: UIViewController, ARSCNViewDelegate {
+class GameViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var informationLabel: UILabel!
@@ -31,6 +31,13 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
     var worldAnchor: ARPlaneAnchor?
     var playerNode: Player?
     var buttonNodes: [Int:ButtonNode] = [:]
+
+    
+    var thumbTip: CGPoint?
+    var indexTip: CGPoint?
+	var indexDIP: CGPoint?
+
+	var handPoseRequest = VNDetectHumanHandPoseRequest()
     var songName: String = "LittleStar"
     
     var gameController: GameController?
@@ -97,6 +104,7 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
         config.providesAudioData = false
         config.isLightEstimationEnabled = true
         sceneView.session.run(config)
+        sceneView.session.delegate = self
         
         // 2. load world and player
         worldPlane?.geometry = nil
@@ -361,8 +369,139 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
             // 3. Get the plane geometry and update the position
             // planeNode?.position = SCNVector3Make(planeAnchor.center.x, planeAnchor.center.y, planeAnchor.center.z)
         }
+//        }
+
     }
     
+    var frameCount = 0
+
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        
+        // print("didUpdate")
+        frameCount += 1
+
+        if(frameCount % 10 != 0) {
+            return
+        }
+        
+        for buttonNode in buttonNodes.values {
+            buttonNode.resetHit()
+        }
+
+        let pixelBuffer = frame.capturedImage
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer)
+
+        do {
+            try handler.perform([handPoseRequest])
+
+            guard let observation = handPoseRequest.results?.first else {
+                return
+            }
+
+            let thumbTipPoint = try observation.recognizedPoint(.thumbTip)
+            let indexTipPoint = try observation.recognizedPoint(.indexTip)
+            let indexDIPPoint = try observation.recognizedPoint(.indexDIP)
+
+            guard indexTipPoint.confidence > 0.5 else {
+                return
+            }
+
+            thumbTip = CGPoint(x: thumbTipPoint.location.y, y: thumbTipPoint.location.x)
+            indexTip = CGPoint(x: indexTipPoint.location.y, y: indexTipPoint.location.x)
+            indexDIP = CGPoint(x: indexDIPPoint.location.y, y: indexDIPPoint.location.x)
+
+            let indexTipInView = CGPoint(x: indexTip!.x * sceneView.bounds.width, y: indexTip!.y * sceneView.bounds.height)
+
+            let dot = UIView(frame: CGRect(x: indexTipInView.x, y: indexTipInView.y, width: 10, height: 10))
+            dot.backgroundColor = .red
+            // sceneView.addSubview(dot)
+
+            let nearestButton = buttonNodes.values.min { (a, b) -> Bool in
+                let aInView = sceneView.projectPoint(a.worldPosition)
+                let bInView = sceneView.projectPoint(b.worldPosition)
+                let distanceA = sqrt(pow(Float(indexTipInView.x) - Float(aInView.x), 2) + pow(Float(indexTipInView.y) - Float(aInView.y), 2))
+                let distanceB = sqrt(pow(Float(indexTipInView.x) - Float(bInView.x), 2) + pow(Float(indexTipInView.y) - Float(bInView.y), 2))
+                return distanceA < distanceB
+            }
+
+
+            if let nearestButton = nearestButton {
+                let nearestButtonInView = sceneView.projectPoint(nearestButton.worldPosition)
+                let distance = sqrt(pow(Float(indexTipInView.x) - Float(nearestButtonInView.x), 2) + pow(Float(indexTipInView.y) - Float(nearestButtonInView.y), 2))
+                if distance < 100 {
+                    nearestButton.setHit()
+                } else {
+                    nearestButton.resetHit()
+                }
+            }
+
+            
+
+            // for buttonNode in buttonNodes.values {
+            //     print("buttonNode: \(buttonNode.worldPosition)")
+            //     let buttonNodeInView = sceneView.projectPoint(buttonNode.worldPosition)
+
+            //     let buttonNodeInViewFlipped = CGPoint(x: CGFloat(buttonNodeInView.x), y: CGFloat(buttonNodeInView.y))
+            //     print("buttonNodeInView: \(buttonNodeInView)")
+
+            //     let dot = UIView(frame: CGRect(x: CGFloat(buttonNodeInViewFlipped.x), y: CGFloat(buttonNodeInViewFlipped.y), width: 10, height: 10))
+            //     dot.backgroundColor = .blue
+            //     // sceneView.addSubview(dot)
+
+            //     let distance = sqrt(pow(Float(buttonNodeInViewFlipped.x) - Float(indexTipInView.x), 2) + pow(Float(buttonNodeInViewFlipped.y) - Float(indexTipInView.y), 2))
+            //     if distance < 100 {
+            //         buttonNode.setHit()
+            //     } else {
+            //         buttonNode.resetHit()
+            //     }
+            // }
+
+
+
+            // let sphere = SCNSphere(radius: 0.005)
+            // sphere.firstMaterial?.diffuse.contents = UIColor.red
+            // let sphereNode = SCNNode(geometry: sphere)
+
+            // let hitTestResults = sceneView.hitTest(thumbTipInView, types: .existingPlane)
+
+            // // print ("hitTestResults: \(hitTestResults)")
+
+            // if let groundResult = hitTestResults.first {
+            //     sphereNode.position = SCNVector3(groundResult.worldTransform.columns.3.x, groundResult.worldTransform.columns.3.y, groundResult.worldTransform.columns.3.z)
+            //     sceneView.scene.rootNode.addChildNode(sphereNode)
+            // } 
+
+            // sphereNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(geometry: sphere, options: nil))
+            // sphereNode.physicsBody?.categoryBitMask = 1
+            // sphereNode.physicsBody?.collisionBitMask = 0
+            // sphereNode.physicsBody?.contactTestBitMask = 1
+            // sphereNode.physicsBody?.isAffectedByGravity = false
+
+            // // print("thumbTip: \(thumbTipPoint.location)")
+            // for buttonNode in buttonNodes.values {
+            //     buttonNode.physicsBody = SCNPhysicsBody(type: .kinematic, shape: SCNPhysicsShape(node: buttonNode, options: nil))
+            //     buttonNode.physicsBody?.categoryBitMask = 1
+            //     buttonNode.physicsBody?.collisionBitMask = 0
+            //     buttonNode.physicsBody?.contactTestBitMask = 1
+            //     buttonNode.physicsBody?.isAffectedByGravity = false
+
+            //     // let contactTestResults = sceneView.scene.physicsWorld.contactTestBetween(sphereNode.physicsBody!, buttonNode.physicsBody!, options: nil)
+            //     // if !contactTestResults.isEmpty {
+            //     //     buttonNode.setHit()
+            //     // } else {
+            //     //     buttonNode.resetHit()
+            //     // }
+
+                
+            // }
+            
+
+        } catch {
+            print(error)
+        }
+        
+    }
+
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -378,3 +517,5 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
         
     }
 }
+
+
