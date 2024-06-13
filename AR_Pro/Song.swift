@@ -8,10 +8,23 @@
 import Foundation
 
 struct Song: Codable {
+    var id: Int
+    var name: String
+    var difficulty: Int      // 歌曲的难度
     var speed: Int           // 歌曲的速度
     var notes: [Note]        // 歌曲的音符
     var pre: Int             // 前奏长度（第一个音符的出现时间等于 0）
     var length: Int          // 歌曲的长度
+    
+    init(id: Int, name: String, difficulty: Int, speed: Int, notes: [Note], pre: Int, length: Int) {
+        self.id = id
+        self.name = name
+        self.difficulty = difficulty
+        self.speed = speed
+        self.notes = notes
+        self.pre = pre
+        self.length = length
+    }
 }
 
 extension Song {
@@ -42,6 +55,9 @@ func getSong(songName: String) -> Song {
 func getSong() -> Song {
     let json = """
 {
+    "id": 0,
+    "name": "Demo",
+    "difficulty": 1,
     "speed": 80,
     "pre": 0,
     "notes": [

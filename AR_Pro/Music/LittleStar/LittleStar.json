@@ -1,6 +1,9 @@
 {
+    "id":0,
+    "name": "LittleStar",
+    "difficulty": 2,
     "speed": 120,
-    "pre": 19,
+    "pre": 17,
     "notes": [
         {
             "id": 0,

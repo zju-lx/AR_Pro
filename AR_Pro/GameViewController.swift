@@ -23,13 +23,15 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var informationLabel: UILabel!
-    
+    @IBOutlet weak var GoBackButton: UIButton!
+    @IBOutlet weak var OnceAgainButton: UIButton!
     
     var planes = [ARAnchor: SCNNode]()
     var worldPlane: SCNNode?
     var worldAnchor: ARPlaneAnchor?
     var playerNode: Player?
     var buttonNodes: [Int:ButtonNode] = [:]
+    var songName: String = "LittleStar"
     
     var gameController: GameController?
     
@@ -68,10 +70,14 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
             setup()
             showMessage("onboarded. Tap to start game.")
         case .playing:
-            gameController!.startGame()
+            GoBackButton.isHidden = true
+            OnceAgainButton.isHidden = true
+            gameController!.startGame(songName: songName)
             showMessage("Score: \(gameController!.score)")
         case .gameOver:
-            showMessage("Total Score: \(gameController!.score)\n Tap for another round.")
+            GoBackButton.isHidden = false
+            OnceAgainButton.isHidden = false
+            showMessage("Total Score: \(gameController!.score)")
         }
     }
     
@@ -121,7 +127,9 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
         
         // 3. init gameController
         gameController = GameController(worldPlane: worldPlane!, viewController: self)
-
+        
+        GoBackButton.isHidden = true
+        OnceAgainButton.isHidden = true
     }
     
     private func loadModel(name: String) -> SCNNode {
@@ -199,7 +207,9 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
                 state = .onboard
             }
         } else if state == .onboard {
-            state = .playing
+            if gestureRecognizer.state == .began {
+                state = .playing
+            }
         } else if state == .playing{
             let location = gestureRecognizer.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(location, options: nil)
@@ -218,7 +228,7 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
                 }
             }
         } else if state == .gameOver {
-            state = .playing
+            // state = .playing
         }
     }
     
@@ -263,6 +273,9 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the scene to the view
         sceneView.scene = scene
+        
+        GoBackButton.isHidden = true
+        OnceAgainButton.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -281,6 +294,20 @@ class GameViewController: UIViewController, ARSCNViewDelegate {
         // Pause the view's session
         sceneView.session.pause()
     }
+    
+    @IBAction func GoBackTapped(_ sender: Any) {
+        self.navigationController?.popViewController(animated: false)
+    }
+    
+    
+    @IBAction func OnceAgainTapped(_ sender: Any) {
+        state = .playing
+    }
+    
+    func setSongName(songName: String) {
+        self.songName = songName
+    }
+    
 
     // MARK: - ARSCNViewDelegate
     func createARPlanePhysics(geometry: SCNGeometry) -> SCNPhysicsBody {

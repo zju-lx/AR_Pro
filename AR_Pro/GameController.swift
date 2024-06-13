@@ -24,18 +24,20 @@ class GameController {
     
     var timer: Timer?
     
+    var dbManager = DBManager()
+    
     init(worldPlane: SCNNode, viewController: GameViewController) {
         song = getSong()
         self.worldPlane = worldPlane
         self.viewController = viewController
     }
     
-    func startGame() {
+    func startGame(songName: String) {
         beatCount = 0;
         nextNoteIndex = 0;
         score = 0;
         
-        song = getSong(songName: "LittleStar")
+        song = getSong(songName: songName)
         let AudioSource = AudioPlayer.load(name: "LittleStar");
         AudioPlayer.play(source: AudioSource, on: worldPlane!)
         
@@ -64,6 +66,13 @@ class GameController {
 //            print("over.")
             timer!.invalidate()
             viewController!.state = .gameOver
+            let record = Record(context: dbManager.container.viewContext)
+            record.songId = Int32(song!.id)
+            record.score = Int32(score)
+            record.date = Date()
+            dbManager.insertRecord(record: record)
+            let res = dbManager.selectRecords(songId: song!.id)
+            viewController!.showMessage("Game Over! Score: \(score)\n The best score is \(res[0].score)")
         }
     }
     

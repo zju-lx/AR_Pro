@@ -17,9 +17,10 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var logo: UIImageView!
     @IBAction func startButtonTapped(_ sender: Any) {
         print("start button tapped")
-        let gameViewController = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
-        // self.present(gameViewController, animated: true, completion: nil)
-        self.navigationController?.pushViewController(gameViewController, animated: false)
+        // let gameViewController = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
+        let musicViewController = self.storyboard?.instantiateViewController(withIdentifier: "MusicViewController") as! MusicViewController
+        // self.navigationController?.pushViewController(gameViewController, animated: false)
+        self.navigationController?.pushViewController(musicViewController, animated: false)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
