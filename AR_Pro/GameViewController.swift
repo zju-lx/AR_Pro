@@ -428,7 +428,7 @@ class GameViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate
             if let nearestButton = nearestButton {
                 let nearestButtonInView = sceneView.projectPoint(nearestButton.worldPosition)
                 let distance = sqrt(pow(Float(indexTipInView.x) - Float(nearestButtonInView.x), 2) + pow(Float(indexTipInView.y) - Float(nearestButtonInView.y), 2))
-                if distance < 100 {
+                if distance < 150 {
                     nearestButton.setHit()
                 } else {
                     nearestButton.resetHit()

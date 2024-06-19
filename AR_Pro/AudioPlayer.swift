@@ -12,7 +12,9 @@ class AudioPlayer {
     
     static func load(name: String) -> SCNAudioSource {
         let filePath = "\(name).m4a"
-        let audioSource = SCNAudioSource(fileNamed: filePath)!
+        guard let audioSource = SCNAudioSource(fileNamed: filePath) else {
+            return SCNAudioSource()
+        }
         audioSource.load()
         audioSource.volume = 1
         audioSource.isPositional = true

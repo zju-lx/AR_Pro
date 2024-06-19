@@ -7,10 +7,13 @@
 
 import Foundation
 import UIKit
+import SceneKit
 
 class MusicViewController: UITableViewController {
         
         var musicList: [Song] = []
+
+        var fileList: [String] = ["LittleStar.m4a"]
         
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -49,6 +52,19 @@ class MusicViewController: UITableViewController {
         
         override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             print("You selected cell #\(indexPath.row)!")
+            print("Selected song name: \(musicList[indexPath.row].name)")
+
+            let fileName = "\(musicList[indexPath.row].name).m4a"
+            if !fileList.contains(fileName) {
+                let alertController = UIAlertController(title: "Note", message: "找不到音源", preferredStyle: .alert)
+
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
+
+                return
+            }
+
             let gameViewController = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
             gameViewController.setSongName(songName: musicList[indexPath.row].name)
             self.navigationController?.pushViewController(gameViewController, animated: false)

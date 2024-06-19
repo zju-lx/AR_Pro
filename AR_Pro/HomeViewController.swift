@@ -12,7 +12,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        logo.image = UIImage(named: "logo")
+//        logo.image = UIImage(named: "logo")
     }
     @IBOutlet weak var logo: UIImageView!
     @IBAction func startButtonTapped(_ sender: Any) {

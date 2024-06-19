@@ -20,6 +20,7 @@
 		D366416D2C1AA96700CC2952 /* MusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D366416C2C1AA96700CC2952 /* MusicViewController.swift */; };
 		D366416F2C1AAA6300CC2952 /* MusicTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D366416E2C1AAA6300CC2952 /* MusicTableCell.swift */; };
 		D399C7A62C149A5D00D71980 /* NoteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D399C7A52C149A5D00D71980 /* NoteNode.swift */; };
+		D3B2F18E2C22F4EF000447CE /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3B2F18D2C22F4EF000447CE /* Launch Screen.storyboard */; };
 		D3CAC6C92C15CA8800BC674D /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CAC6C82C15CA8800BC674D /* AudioPlayer.swift */; };
 		D3CAC6CD2C15D06F00BC674D /* LittleStar.json in Resources */ = {isa = PBXBuildFile; fileRef = D3CAC6CC2C15D06F00BC674D /* LittleStar.json */; };
 		D3CAC6CF2C15D0E600BC674D /* LittleStar.m4a in Resources */ = {isa = PBXBuildFile; fileRef = D3CAC6CE2C15D0E600BC674D /* LittleStar.m4a */; };
@@ -65,6 +66,7 @@
 		D366416C2C1AA96700CC2952 /* MusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewController.swift; sourceTree = "<group>"; };
 		D366416E2C1AAA6300CC2952 /* MusicTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTableCell.swift; sourceTree = "<group>"; };
 		D399C7A52C149A5D00D71980 /* NoteNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteNode.swift; sourceTree = "<group>"; };
+		D3B2F18D2C22F4EF000447CE /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		D3CAC6C82C15CA8800BC674D /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		D3CAC6CC2C15D06F00BC674D /* LittleStar.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LittleStar.json; sourceTree = "<group>"; };
 		D3CAC6CE2C15D0E600BC674D /* LittleStar.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = LittleStar.m4a; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				D366416E2C1AAA6300CC2952 /* MusicTableCell.swift */,
 				D3DFD69F2C18478400D2CFD8 /* HomeViewController.swift */,
 				D360625C2C11E2FD00B625DC /* Assets.xcassets */,
+				D3B2F18D2C22F4EF000447CE /* Launch Screen.storyboard */,
 				D3CD5B7D2C130B320086FCEC /* Song.swift */,
 				D3CD5B7F2C130EB00086FCEC /* GameController.swift */,
 				D3DFD6A62C19DA3B00D2CFD8 /* DBManager.swift */,
@@ -284,6 +287,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3B2F18E2C22F4EF000447CE /* Launch Screen.storyboard in Resources */,
 				D3CAC6CF2C15D0E600BC674D /* LittleStar.m4a in Resources */,
 				D36062562C11E2FB00B625DC /* art.scnassets in Resources */,
 				D360625D2C11E2FD00B625DC /* Assets.xcassets in Resources */,
@@ -504,6 +508,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -533,6 +538,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
